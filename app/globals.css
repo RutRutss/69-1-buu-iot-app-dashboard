@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --background: #e9eefb;
+  --foreground: #0b0b0b;
+
+  /* Opaque stand-in for the glass panel, used where a solid colour is needed
+     (chart dot rings). */
+  --surface: #f4f6fc;
+  --ink: #0b1220;
+  --ink-inverse: #ffffff;
+  --ink-secondary: #414a5c;
+  --ink-muted: #6b7486;
+  --grid: rgba(11, 18, 32, 0.08);
+  --axis: rgba(11, 18, 32, 0.2);
+  --hairline: rgba(11, 18, 32, 0.1);
+
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-solid: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-shadow: 0 8px 32px rgba(31, 51, 110, 0.12);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
+  --blob-1: rgba(96, 165, 250, 0.55);
+  --blob-2: rgba(192, 132, 252, 0.45);
+  --blob-3: rgba(52, 211, 153, 0.4);
+  --blob-4: rgba(251, 146, 60, 0.3);
+
+  --series-humidity: #2a78d6;
+  --series-temperature: #eb6834;
+  --series-soil: #1baf7a;
+  --status-good: #0ca30c;
+  --status-good-tint: rgba(12, 163, 12, 0.14);
+  --status-high: #d03b3b;
+  --status-high-tint: rgba(208, 59, 59, 0.14);
+  --status-low: #2a78d6;
+  --status-low-tint: rgba(42, 120, 214, 0.14);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-inverse: var(--ink-inverse);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-muted: var(--ink-muted);
+  --color-hairline: var(--hairline);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --background: #070b18;
+    --foreground: #ffffff;
+
+    --surface: #1b2136;
+    --ink: #ffffff;
+    --ink-inverse: #0b1220;
+    --ink-secondary: #c5cbdb;
+    --ink-muted: #8f98ad;
+    --grid: rgba(255, 255, 255, 0.08);
+    --axis: rgba(255, 255, 255, 0.2);
+    --hairline: rgba(255, 255, 255, 0.1);
+
+    --glass: rgba(255, 255, 255, 0.07);
+    --glass-solid: rgba(22, 28, 48, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.14);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+    --blob-1: rgba(37, 99, 235, 0.5);
+    --blob-2: rgba(147, 51, 234, 0.4);
+    --blob-3: rgba(13, 148, 136, 0.35);
+    --blob-4: rgba(234, 88, 12, 0.22);
+
+    --series-humidity: #3987e5;
+    --series-temperature: #d95926;
+    --series-soil: #199e70;
+
+    --status-good-tint: rgba(12, 163, 12, 0.22);
+    --status-high: #e66767;
+    --status-high-tint: rgba(230, 103, 103, 0.22);
+    --status-low: #5598e7;
+    --status-low-tint: rgba(85, 152, 231, 0.22);
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+}
+
+/* Soft colour field behind the page — what the glass panels blur. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(40rem 32rem at 8% 0%, var(--blob-1), transparent 70%),
+    radial-gradient(36rem 30rem at 95% 10%, var(--blob-2), transparent 70%),
+    radial-gradient(38rem 32rem at 75% 100%, var(--blob-3), transparent 70%),
+    radial-gradient(30rem 26rem at 10% 95%, var(--blob-4), transparent 70%);
+}
+
+.glass,
+.glass-solid {
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+}
+
+.glass {
+  background: var(--glass);
+}
+
+/* Less see-through, for small overlays that sit on top of chart marks. */
+.glass-solid {
+  background: var(--glass-solid);
+}
+
+/* Form controls (select, date input, small buttons) on a glass panel. */
+.control {
+  border: 1px solid var(--hairline);
+  border-radius: 0.5rem;
+  background: var(--glass);
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8125rem;
+  color: var(--ink);
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.control:hover:not(:disabled) {
+  border-color: var(--axis);
+}
+
+.control:disabled {
+  opacity: 0.4;
+}
+
+/* Entrance for content that swaps when the range filter changes; stagger
+   siblings with --i. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+.animate-rise {
+  animation: rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise {
+    animation: none;
+  }
+}
